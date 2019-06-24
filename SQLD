@@ -185,4 +185,92 @@ GROUP BY ROLLUP(DNAME, JOB)
 ORDER BY DNAME, JOB
 ;
 
-/*P5 */
+/*P5 GROUPING, ROLLUP*/
+SELECT
+        DNAME
+      , GROUPING(DNAME)
+      , JOB
+      , GROUPING(JOB)
+      , COUNT(*) "TOTAL EMPL"
+      , SUM(SAL) "TOTAL SAL"
+FROM    EMP, DEPT
+WHERE   DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY ROLLUP(DNAME, JOB)
+;
+
+/*P6 GROUPING, CASE, ROLLUP*/
+SELECT
+        CASE GROUPING(DNAME) WHEN 1 THEN 'ALL DEPARTMENTS' ELSE DNAME END AS DNAME
+      , CASE GROUPING(JOB)   WHEN 1 THEN 'ALL JOBS' ELSE JOB END AS JOB
+      , COUNT(*) "TOTAL EMPL"
+      , SUM(SAL) "TOTAL SAL"
+FROM    EMP, DEPT
+WHERE   DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY ROLLUP(DNAME, JOB)
+;
+
+/*P7 ROLLUP 함수 일부 사용 ; GROUPING(DNAME)이 작동하지 않는 상황*/
+SELECT
+        CASE GROUPING(DNAME) WHEN 1 THEN 'ALL DEPARTMENTS' ELSE DNAME END AS DNAME
+      , CASE GROUPING(JOB)   WHEN 1 THEN 'ALL JOBS' ELSE JOB END AS JOB
+      , COUNT(*) "TOTAL EMPL"
+      , SUM(SAL) "TOTAL SAL"
+FROM    EMP, DEPT
+WHERE   DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY DNAME ,ROLLUP(JOB)
+;
+
+/*P7 ROLLUP 함수 결합 컬럼 사용*/
+SELECT
+        DNAME
+      , JOB
+      , MGR
+      , SUM(SAL) "TOTAL SAL"
+      , GROUPING(JOB)
+      , GROUPING(MGR)
+FROM    EMP
+      , DEPT
+WHERE   DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY
+ROLLUP (DNAME
+      ,(JOB, MGR)
+       )
+;
+/*시간 함수*/
+SELECT SYSTIMESTAMP FROM DUAL;
+
+/* P15 WINDOW FUNCTION RANK함수
+   사원 데이터에서 급여가 높은 순서와 JOB별로 급여가 높은 순서를 같이 출력
+*/
+SELECT
+        JOB
+      , ENAME
+      , SAL
+      , RANK() OVER(ORDER BY SAL DESC) ALL_RANK
+      , RANK() OVER(PARTITION BY JOB ORDER BY SAL DESC) JOB_RANK
+FROM EMP
+;
+
+/* P16 DENSE_RANK
+   사원 데이터에서 급여가 높은 순서와, 동일한 순위를 하나의 등수로 간주한 결과도 같이 출력한다.
+*/
+SELECT
+        JOB
+      , ENAME
+      , SAL
+      , RANK() OVER(ORDER BY SAL DESC) RANK --공동 2위일경우 3위는 표기하지 않고 4위로 넘어감
+      , DENSE_RANK() OVER(ORDER BY SAL DESC) DENSE_RANK --공동 2위일 경우 3위를 표기함
+FROM    EMP
+;
+
+/* P16 ROW_NUMBER
+   사원데이터에서 급여가 높은 순서와, 동일한 순위를 인정하지 않는 등수도 같이 출력한다.
+*/
+SELECT
+        JOB
+      , ENAME
+      , SAL
+      , RANK() OVER(ORDER BY SAL DESC) RANK
+      , ROW_NUMBER() OVER(ORDER BY SAL DESC) ROW_NUMBER -- 공동순위를 무시하고 출력
+FROM    EMP
+;
