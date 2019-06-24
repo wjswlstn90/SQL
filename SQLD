@@ -1,0 +1,188 @@
+--P9 조인
+SELECT
+       E.DEPTNO
+      , D.DEPTNO
+      , D.DNAME
+FROM   
+        EMP E
+      , DEPT D
+WHERE   1 = 1
+AND     E.DEPTNO = D.DEPTNO
+AND     E.DEPTNO = 30;
+
+
+-- P14 조인 ON 조건절(WHERE로 대체)
+SELECT
+        P.PLAYER_NAME   선수명
+      , P.POSITION      포지션
+      , T.REGION_NAME   연고지명
+      , T.TEAM_NAME     팀명
+      , S.STADIUM_NAME  구장명
+FROM
+        PLAYER P
+      , TEAM T
+      , STADIUM S
+WHERE   1 = 1
+AND     P.TEAM_ID = T.TEAM_ID
+AND     T.STADIUM_ID = S.STADIUM_ID
+AND     P.POSITION = 'GK'
+ORDER   BY 선수명;
+
+
+-- P15 조인 홈팀이 3점 이상 차이로 승리한 경기의 경기장 이름, 경기 일정, 홈팀 이름과 원정팀 이름 정보를 출력
+SELECT
+        ST.STADIUM_NAME
+      , SC.STADIUM_ID
+      , SCHE_DATE
+      , HT.TEAM_NAME
+      , AT.TEAM_NAME
+      , HOME_SCORE
+      , AWAY_SCORE
+FROM
+        SCHEDULE SC
+JOIN    STADIUM  ST
+ON      SC.STADIUM_ID  = ST.STADIUM_ID
+JOIN    TEAM     HT
+ON      SC.HOMETEAM_ID = HT.TEAM_ID
+JOIN    TEAM     AT
+ON      SC.AWAYTEAM_ID = AT.TEAM_ID
+WHERE   HOME_SCORE >= AWAY_SCORE + 3
+;
+
+
+/* P17 LEFT OUTER JOIN STADIUM에 등록된 운동장 정보를 출력(운동장이름과 운동장의 소속팀을 출력)
+   오른쪽 테이블에 정보가 없으면 NULL출력 */
+SELECT
+        STADIUM_NAME
+      , STADIUM.STADIUM_ID
+      , SEAT_COUNT
+      , HOMETEAM_ID
+      , TEAM_NAME
+FROM    STADIUM
+LEFT OUTER JOIN TEAM
+ON      STADIUM.HOMETEAM_ID = TEAM.TEAM_ID
+ORDER BY
+        HOMETEAM_ID
+;        
+/* P18 RIGHT OUTER JOIN
+   DEPT에 등록된 부서 중에는 사원이 없는 부서도 있다 -> 15번 ENAME값에 null*/
+SELECT
+        E.ENAME
+      , D.DEPTNO
+      , D.DNAME
+      , D.LOC
+FROM    EMP E RIGHT OUTER JOIN DEPT D
+ON      E.DEPTNO = D.DEPTNO
+
+/* P19 FULL OUTER JOIN
+   DEPTNO 기준으로 DEPT와 DEPT_TEMP 데이터를 FULL OUTER JOIN으로 출력 ;;실행안됨*/
+SELECT  *
+FROM    DEPT FULL OUTER JOIN DEPT_TEMP
+ON      DEPT.DEPTNO = DEPT_TEMP.DEPTNO
+;
+
+/* P38 단일 행 서브 쿼리 
+   정남일 선수가 소속된 팀 선수 정보를 표시 
+   PLAYER_ID, PLAYER_NAME, TEAM_ID, E_PLAYER_NAME, NICKNAME, JOIN_YYYY, POSITION, BACK_NO, NATION, BIRTH_DATE, SOLAR, HEIGHT, WEIGHT
+*/
+   
+SELECT
+        PLAYER_NAME
+      , POSITION
+      , BACK_NO
+FROM    PLAYER
+WHERE   TEAM_ID = (
+                    SELECT  TEAM_ID
+                    FROM    PLAYER
+                    WHERE   PLAYER_NAME = '정남일'
+                  )
+ORDER BY
+        PLAYER_NAME
+;
+
+/* P39 단일 행 서브 쿼리
+   평균 이하의 키를 가지고 있는 선수 정보를 출력하는 쿼리
+*/
+SELECT
+        PLAYER_NAME
+      , POSITION
+      , BACK_NO
+      , HEIGHT
+FROM    PLAYER
+WHERE   HEIGHT <= (
+                    SELECT AVG(HEIGHT)
+                    FROM   PLAYER
+                  )
+ORDER BY
+        PLAYER_NAME
+;
+
+/* P40 다중 행 서브 쿼리
+   IN        서브쿼리 결과에 존재하는 임의의 값과 동일한 조건 (OR조건 있다면 해당 조건 출력)
+   ALL       서브쿼리 결과값들 모두를 만족하는 조건 (AND조건)
+   ANY, SOME 서브쿼리 결과값 중 한개라도 만족하는 조건 (OR조건)
+   EXISTS    서브쿼리 결과를 만족하는 값이 존재하는지 (있다면 전부 출력)
+   선수들 중에서 '정현수'선수가 소속되어 있는 팀 정보를 출력
+*/
+SELECT
+        REGION_NAME
+      , TEAM_NAME
+      , E_TEAM_NAME
+FROM    TEAM
+WHERE   TEAM_ID IN(
+                    SELECT  TEAM_ID
+                    FROM    PLAYER
+                    WHERE   PLAYER_NAME = '정현수'
+                  )
+ORDER BY
+        TEAM_NAME
+;
+
+/*P3 ROLLUP 일반적인 GROUP BY*/
+SELECT * FROM EMP, DEPT;
+
+SELECT
+        DNAME
+      , JOB
+      , COUNT(*) "TOTAL EMPL"
+      , SUM(SAL) "TOTAL SAL"
+FROM    EMP, DEPT
+WHERE   DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY DNAME, JOB
+;
+
+/*P3 ROLLUP GROUP BY + ORDER BY*/
+SELECT
+        DNAME
+      , JOB
+      , COUNT(*) "TOTAL EMPL"
+      , SUM(SAL) "TOTAL SAL"
+FROM    EMP, DEPT
+WHERE   DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY DNAME, JOB
+ORDER BY DNAME, JOB
+;
+
+/*P4 ROLLUP GROUP BY 안에 ROLLUP*/
+SELECT
+        DNAME
+      , JOB
+      , COUNT(*) "TOTAL EMPL"
+      , SUM(SAL) "TOTAL SAL"
+FROM    EMP, DEPT
+WHERE   DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY ROLLUP(DNAME, JOB)
+;
+--ORDER BY
+SELECT
+        DNAME
+      , JOB
+      , COUNT(*) "TOTAL EMPL"
+      , SUM(SAL) "TOTAL SAL"
+FROM    EMP, DEPT
+WHERE   DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY ROLLUP(DNAME, JOB)
+ORDER BY DNAME, JOB
+;
+
+/*P5 */
