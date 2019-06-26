@@ -53,6 +53,7 @@ WHERE   HOME_SCORE >= AWAY_SCORE + 3
 /* P17 LEFT OUTER JOIN STADIUM에 등록된 운동장 정보를 출력(운동장이름과 운동장의 소속팀을 출력)
    오른쪽 테이블에 정보가 없으면 NULL출력 */
 SELECT
+
         STADIUM_NAME
       , STADIUM.STADIUM_ID
       , SEAT_COUNT
@@ -73,9 +74,9 @@ SELECT
       , D.LOC
 FROM    EMP E RIGHT OUTER JOIN DEPT D
 ON      E.DEPTNO = D.DEPTNO
-
+;
 /* P19 FULL OUTER JOIN
-   DEPTNO 기준으로 DEPT와 DEPT_TEMP 데이터를 FULL OUTER JOIN으로 출력 ;;실행안됨*/
+   DEPTNO 기준으로 DEPT와 DEPT_TEMP 데이터를 FULL OUTER JOIN으로 출력 ;;실행안됨*/   
 SELECT  *
 FROM    DEPT FULL OUTER JOIN DEPT_TEMP
 ON      DEPT.DEPTNO = DEPT_TEMP.DEPTNO
@@ -274,3 +275,50 @@ SELECT
       , ROW_NUMBER() OVER(ORDER BY SAL DESC) ROW_NUMBER -- 공동순위를 무시하고 출력
 FROM    EMP
 ;
+
+/* P17
+   사원들의 급여와 같은 매니저를 두고 있는 사원들의 SALARY 합을 구한다.
+*/
+SELECT
+        MGR
+      , ENAME
+      , SAL
+      , SUM(SAL) OVER(PARTITION BY MGR) MGR_SUM
+FROM    EMP
+;
+
+SELECT
+        E.MGR        
+      , E.ENAME
+      , E.SAL
+      , SMGR.MGR_SUM
+FROM    EMP E
+      , (
+            SELECT  
+                    MGR
+                  , SUM(SAL) MGR_SUM
+            FROM    EMP
+            GROUP BY 
+                    MGR
+        )   SMGR
+WHERE   SMGR.MGR = E.MGR
+ORDER BY
+        MGR
+;
+
+/* SUM OVER 윈도우함수관련(합계) */
+SELECT empno, ename, deptno, sal,
+       SUM(sal) OVER(ORDER BY deptno, empno 
+                ROWS BETWEEN UNBOUNDED PRECEDING 
+                         AND UNBOUNDED FOLLOWING) sal1,
+       SUM(sal) OVER(ORDER BY deptno, empno 
+                ROWS BETWEEN UNBOUNDED PRECEDING 
+                         AND CURRENT ROW) sal2,
+       SUM(sal) OVER(ORDER BY deptno, empno 
+                ROWS BETWEEN CURRENT ROW 
+                         AND UNBOUNDED FOLLOWING) sal3
+FROM emp
+;
+-- SAL1 : 첫 번째 ROW부터 마지막 ROW까지의 급여 합계이다. 
+-- SAL2 : 첫 번째 ROW 부터 현재 ROW까지의 급여 합계이다. 
+-- SAL3 : 현재 ROW부터 마지막 ROW까지 급여 합계이다.
