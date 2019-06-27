@@ -8,7 +8,8 @@ FROM
       , DEPT D
 WHERE   1 = 1
 AND     E.DEPTNO = D.DEPTNO
-AND     E.DEPTNO = 30;
+AND     E.DEPTNO = 30
+;
 
 
 -- P14 조인 ON 조건절(WHERE로 대체)
@@ -26,7 +27,8 @@ WHERE   1 = 1
 AND     P.TEAM_ID = T.TEAM_ID
 AND     T.STADIUM_ID = S.STADIUM_ID
 AND     P.POSITION = 'GK'
-ORDER   BY 선수명;
+ORDER   BY 선수명
+;
 
 
 -- P15 조인 홈팀이 3점 이상 차이로 승리한 경기의 경기장 이름, 경기 일정, 홈팀 이름과 원정팀 이름 정보를 출력
@@ -53,7 +55,6 @@ WHERE   HOME_SCORE >= AWAY_SCORE + 3
 /* P17 LEFT OUTER JOIN STADIUM에 등록된 운동장 정보를 출력(운동장이름과 운동장의 소속팀을 출력)
    오른쪽 테이블에 정보가 없으면 NULL출력 */
 SELECT
-
         STADIUM_NAME
       , STADIUM.STADIUM_ID
       , SEAT_COUNT
@@ -322,3 +323,11 @@ FROM emp
 -- SAL1 : 첫 번째 ROW부터 마지막 ROW까지의 급여 합계이다. 
 -- SAL2 : 첫 번째 ROW 부터 현재 ROW까지의 급여 합계이다. 
 -- SAL3 : 현재 ROW부터 마지막 ROW까지 급여 합계이다.
+
+
+SELECT mgr, ename, sal,
+       sum(sal) over(partition by sal order by sal rows between unbounded preceding and current row) mgr_sum
+from emp
+;
+select ename, sal, count(*) over(order by sal range between 50 preceding and 150 following) sim
+from emp
