@@ -1,21 +1,21 @@
         SELECT 
-                QTY.ORD_DT          ¿œ¿⁄
+                QTY.ORD_DT          ÏùºÏûê
               , CASE
                     WHEN GROUPING(QTY.ORD_DT) = 0 THEN QTY.ORD_DT
                     WHEN GROUPING(QTY.ORD_DT) = 1 THEN SUBSTR(:st_dt,1,6)
                 END     ORD_DT
-              , QTY.ITEM_ID          ªÛ«∞ID
-              , IT.ITEM_NM          ªÛ«∞∏Ì
+              , QTY.ITEM_ID          ÏÉÅÌíàID
+              , IT.ITEM_NM          ÏÉÅÌíàÎ™Ö
               , CASE
                     --WHEN GROUPING(QTY.ORD_DT) = 0 AND GROUPING(IT.ITEM_NM) = 0 THEN IT.ITEM_NM
                     WHEN GROUPING(QTY.ORD_DT) = 0 AND GROUPING(IT.ITEM_NM) = 0 THEN IT.ITEM_NM
-                    WHEN GROUPING(QTY.ORD_DT) = 0 AND GROUPING(IT.ITEM_NM) = 1 THEN 'º“∞Ë'
-                    WHEN GROUPING(QTY.ORD_DT) = 1 AND GROUPING(IT.ITEM_NM) = 1 THEN '«’∞Ë'
+                    WHEN GROUPING(QTY.ORD_DT) = 0 AND GROUPING(IT.ITEM_NM) = 1 THEN 'ÏÜåÍ≥Ñ'
+                    WHEN GROUPING(QTY.ORD_DT) = 1 AND GROUPING(IT.ITEM_NM) = 1 THEN 'Ìï©Í≥Ñ'
                 END     ITEM_NM
               , GROUPING(QTY.ORD_DT)    X
               , GROUPING(IT.ITEM_NM)    Y              
-              , SUM(QTY.ORD_ITEM_QTY)    ∆«∏≈ºˆ∑Æ
-              , SUM(QTY.SALE_AMT)     ∆«∏≈±›æ◊
+              , SUM(QTY.ORD_ITEM_QTY)    ÌåêÎß§ÏàòÎüâ
+              , SUM(QTY.SALE_AMT)     ÌåêÎß§Í∏àÏï°
               , CASE
                 WHEN GROUPING(QTY.ORD_DT) = 0 AND GROUPING(IT.ITEM_NM) = 0 THEN RANK() OVER(PARTITION BY QTY.ORD_DT,GROUPING(IT.ITEM_NM)  ORDER BY SUM(QTY.ORD_ITEM_QTY) DESC)
                 ELSE NULL
@@ -45,13 +45,13 @@
                                 FROM    UITEM_PRICE
                                 GROUP BY
                                         ITEM_ID                            
-                            )   PRICE -- ¥‹«∞∞°∞› ≈◊¿Ã∫Ì, ∆«∏≈∞°
+                            )   PRICE -- Îã®ÌíàÍ∞ÄÍ≤© ÌÖåÏù¥Î∏î, ÌåêÎß§Í∞Ä
                     WHERE   ORD_DT  BETWEEN :st_dt AND :ed_dt
                     AND     PRICE.ITEM_ID = OI.ITEM_ID
                     GROUP BY
                             OI.ORD_DT
                           , OI.ITEM_ID
-                )   QTY -- ∆«∏≈ºˆ∑Æ, ±›æ◊
+                )   QTY -- ÌåêÎß§ÏàòÎüâ, Í∏àÏï°
         WHERE   1 = 1
         AND     QTY.ITEM_ID = IT.ITEM_ID
         GROUP BY ROLLUP(
@@ -60,8 +60,8 @@
               ,  IT.ITEM_NM
                 )
                 
-                /*
-                CASE 1 º“∞Ë∏∏ ±∏«œ±‚
+                /* ROLLUPÏóê ÎåÄÌïú Ïù¥Ìï¥
+                CASE 1 ÏÜåÍ≥ÑÎßå Íµ¨ÌïòÍ∏∞
                 QTY.ORD_DT
               , ROLLUP(
                (QTY.ITEM_ID
@@ -69,7 +69,7 @@
                 */
                 
                 /*
-                CASE 2 «’∞Ë∏∏ ±∏«œ±‚
+                CASE 2 Ìï©Í≥ÑÎßå Íµ¨ÌïòÍ∏∞
                 (QTY.ORD_DT
               , QTY.ITEM_ID
               , IT.ITEM_NM
@@ -77,7 +77,7 @@
                 */
                 
                 /*
-                CASE 3 º“∞Ë «’∞Ë ±∏«œ±‚                
+                CASE 3 ÏÜåÍ≥Ñ Ìï©Í≥Ñ Íµ¨ÌïòÍ∏∞                
                 QTY.ORD_DT
               , (QTY.ITEM_ID
               , IT.ITEM_NM
