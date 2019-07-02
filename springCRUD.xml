@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="devBoard" >	
+	<insert id="insert" parameterType="kr.devmon.devboard.model.DevBoardForm" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+		INSERT INTO DEVBOARD 
+			( TITLE
+			, CONTENT
+			, REG_DTT
+			 )
+		VALUES (
+			#{title,jdbcType=VARCHAR}
+			, #{content,jdbcType=LONGVARCHAR}			
+			, NOW()
+			)
+		]]>
+	</insert>
+	<select id="selectByPrimaryKey" parameterType="java.util.Map" resultType="kr.devmon.devboard.model.DevBoardForm">
+		<![CDATA[
+		SELECT
+				ID id
+			  , TITLE title
+			  , CONTENT content
+			  , REG_DTT regDtt
+		FROM	DEVBOARD		
+		WHERE	ID = #{id,jdbcType=INTEGER}
+		]]>
+	</select>
+	<select id="selectList" parameterType="java.util.Map" resultType="kr.devmon.devboard.model.DevBoardForm">
+		<![CDATA[
+		SELECT
+				ID id
+			  , TITLE title
+			  , CONTENT content
+			  , REG_DTT regDtt
+		FROM	DEVBOARD
+		]]>
+	</select>
+	<delete id="delete" parameterType="java.util.Map">
+	<![CDATA[
+		DELETE
+		FROM	DEVBOARD
+		WHERE	ID = #{id,jdbcType=INTEGER}
+	]]>
+	</delete>
+	<update id="update" parameterType="java.util.Map">
+		<![CDATA[
+		UPDATE	DEVBOARD
+		SET		TITLE = #{title,jdbcType=VARCHAR}
+			  , CONTENT = #{content,jdbcType=LONGVARCHAR}
+		WHERE	ID = #{id,jdbcType=INTEGER}
+		]]>
+	</update>
+</mapper>
