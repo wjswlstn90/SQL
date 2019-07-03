@@ -7,11 +7,13 @@
 			( TITLE
 			, CONTENT
 			, REG_DTT
+			, CATE_ID
 			 )
 		VALUES (
 			  #{title,jdbcType=VARCHAR}
 			, #{content,jdbcType=LONGVARCHAR}			
 			, NOW()
+			, #{cId,jdbcType=INTEGER}
 			)
 		]]>
 	</insert>
@@ -23,6 +25,7 @@
 			  , D.CONTENT content
 			  , D.REG_DTT regDtt
 			  , TC.CATE_NAME cName
+			  , D.CATE_ID	cId
 		FROM	DEVBOARD	D
 			  , TBL_CATEGORY TC
 		WHERE	ID = #{id,jdbcType=INTEGER}
@@ -31,24 +34,28 @@
 		
 		]]>
 	</select>
-	<select id="selectList" parameterType="java.util.Map" resultType="kr.devmon.devboard.model.DevBoardForm">
+	<select id="selectList" parameterType="kr.devmon.devboard.model.DevBoardSearchForm" resultType="kr.devmon.devboard.model.DevBoardForm">
 		SELECT
 				D.ID id
 			  , D.TITLE title
 			  , D.CONTENT content
-			  , D.REG_DTT regDtt
+			  , D.REG_DTT   regDtt
 			  , TC.CATE_NAME cName
+			  , D.CATE_ID	cId
 		FROM	DEVBOARD	D
 			  , TBL_CATEGORY TC
 		WHERE 	D.CATE_ID = TC.CATE_ID
 		AND		TC.CF_ID = 'notice'
+		<if test = "cId != null">
+		AND		D.CATE_ID = #{cId,jdbcType=INTEGER}
+		</if>
 		<if test = "qs != null">
 		<![CDATA[
 		AND		TITLE like CONCAT('%', #{qs,jdbcType=VARCHAR}, '%')
 		]]>
 		</if>
 		<![CDATA[
-		LIMIT	#{cp,jdbcType=INTEGER}, 10
+		LIMIT	#{start,jdbcType=INTEGER},#{end,jdbcType=INTEGER}
 		]]>
 	</select>
 	<delete id="delete" parameterType="java.util.Map">
@@ -63,6 +70,7 @@
 		UPDATE	DEVBOARD
 		SET		TITLE = #{title,jdbcType=VARCHAR}
 			  , CONTENT = #{content,jdbcType=LONGVARCHAR}
+			  , CATE_ID = #{cId,jdbcType=INTEGER}
 		WHERE	ID = #{id,jdbcType=INTEGER}
 		]]>
 	</update>
