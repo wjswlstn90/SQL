@@ -9,7 +9,7 @@
 			, REG_DTT
 			 )
 		VALUES (
-			#{title,jdbcType=VARCHAR}
+			  #{title,jdbcType=VARCHAR}
 			, #{content,jdbcType=LONGVARCHAR}			
 			, NOW()
 			)
@@ -18,22 +18,37 @@
 	<select id="selectByPrimaryKey" parameterType="java.util.Map" resultType="kr.devmon.devboard.model.DevBoardForm">
 		<![CDATA[
 		SELECT
-				ID id
-			  , TITLE title
-			  , CONTENT content
-			  , REG_DTT regDtt
-		FROM	DEVBOARD		
+				D.ID id
+			  , D.TITLE title
+			  , D.CONTENT content
+			  , D.REG_DTT regDtt
+			  , TC.CATE_NAME cName
+		FROM	DEVBOARD	D
+			  , TBL_CATEGORY TC
 		WHERE	ID = #{id,jdbcType=INTEGER}
+		AND		D.CATE_ID = TC.CATE_ID
+		AND		TC.CF_ID = 'notice'
+		
 		]]>
 	</select>
 	<select id="selectList" parameterType="java.util.Map" resultType="kr.devmon.devboard.model.DevBoardForm">
-		<![CDATA[
 		SELECT
-				ID id
-			  , TITLE title
-			  , CONTENT content
-			  , REG_DTT regDtt
-		FROM	DEVBOARD
+				D.ID id
+			  , D.TITLE title
+			  , D.CONTENT content
+			  , D.REG_DTT regDtt
+			  , TC.CATE_NAME cName
+		FROM	DEVBOARD	D
+			  , TBL_CATEGORY TC
+		WHERE 	D.CATE_ID = TC.CATE_ID
+		AND		TC.CF_ID = 'notice'
+		<if test = "qs != null">
+		<![CDATA[
+		AND		TITLE like CONCAT('%', #{qs,jdbcType=VARCHAR}, '%')
+		]]>
+		</if>
+		<![CDATA[
+		LIMIT	#{cp,jdbcType=INTEGER}, 10
 		]]>
 	</select>
 	<delete id="delete" parameterType="java.util.Map">
@@ -51,4 +66,15 @@
 		WHERE	ID = #{id,jdbcType=INTEGER}
 		]]>
 	</update>
+	<select id="selectCount" resultType="int" parameterType="kr.devmon.admin.model.BoardSearchForm">
+		SELECT	count(*)
+		FROM	DEVBOARD
+	</select>
+	<select id="findCate" parameterType="java.util.Map" resultType="kr.devmon.devboard.model.DevBoardForm">
+		SELECT	CATE_ID cId
+			  , CATE_NAME cName
+		FROM	TBL_CATEGORY
+		WHERE 	CF_ID = 'notice'
+	</select>
+	
 </mapper>
