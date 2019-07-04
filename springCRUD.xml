@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="devBoard" >	
-	<insert id="insert" parameterType="kr.devmon.devboard.model.DevBoardForm" useGeneratedKeys="true" keyProperty="id">
+<mapper namespace="devBoard">
+	<insert id="insert"	parameterType="kr.devmon.devboard.model.DevBoardForm" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
 		INSERT INTO DEVBOARD 
 			( TITLE
@@ -34,22 +34,22 @@
 		
 		]]>
 	</select>
-	<select id="selectList" parameterType="kr.devmon.devboard.model.DevBoardSearchForm" resultType="kr.devmon.devboard.model.DevBoardForm">
+	<select id="selectList"	parameterType="kr.devmon.devboard.model.DevBoardSearchForm"	resultType="kr.devmon.devboard.model.DevBoardForm">
 		SELECT
 				D.ID id
 			  , D.TITLE title
 			  , D.CONTENT content
-			  , D.REG_DTT   regDtt
+			  , D.REG_DTT regDtt
 			  , TC.CATE_NAME cName
-			  , D.CATE_ID	cId
-		FROM	DEVBOARD	D
+			  , D.CATE_ID cId
+		FROM	DEVBOARD D
 			  , TBL_CATEGORY TC
 		WHERE 	D.CATE_ID = TC.CATE_ID
-		AND		TC.CF_ID = 'notice'
-		<if test = "cId != null">
-		AND		D.CATE_ID = #{cId,jdbcType=INTEGER}
+		AND 	TC.CF_ID = 'notice'
+		<if test="cId != null">
+		AND 	D.CATE_ID = #{cId,jdbcType=INTEGER}
 		</if>
-		<if test = "qs != null">
+		<if test="qs != null">
 		<![CDATA[
 		AND		TITLE like CONCAT('%', #{qs,jdbcType=VARCHAR}, '%')
 		]]>
@@ -75,14 +75,22 @@
 		]]>
 	</update>
 	<select id="selectCount" resultType="int" parameterType="kr.devmon.admin.model.BoardSearchForm">
-		SELECT	count(*)
-		FROM	DEVBOARD
+		SELECT count(*)
+		FROM DEVBOARD
 	</select>
-	<select id="findCate" parameterType="java.util.Map" resultType="kr.devmon.devboard.model.DevBoardForm">
-		SELECT	CATE_ID cId
+	<select id="findCate" parameterType="java.util.Map"	resultType="kr.devmon.devboard.model.DevBoardForm">
+		SELECT CATE_ID cId
+		 	 , CATE_NAME cName
+		FROM   TBL_CATEGORY
+		WHERE  CF_ID = 'notice'
+	</select>
+	<select id="findSubCate" parameterType="java.util.Map" resultType="kr.devmon.devboard.model.DevBoardForm">
+		SELECT
+				CATE_ID cId
 			  , CATE_NAME cName
-		FROM	TBL_CATEGORY
-		WHERE 	CF_ID = 'notice'
+			  , CF_ID cfId
+		FROM
+				TBL_CATEGORY
+		WHERE	CF_ID = #{topCate,jdbcType=INTEGER}
 	</select>
-	 
 </mapper>
