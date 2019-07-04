@@ -84,5 +84,5 @@
 		FROM	TBL_CATEGORY
 		WHERE 	CF_ID = 'notice'
 	</select>
-	
+	 
 </mapper>
