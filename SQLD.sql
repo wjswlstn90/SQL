@@ -331,3 +331,12 @@ from emp
 ;
 select ename, sal, count(*) over(order by sal range between 50 preceding and 150 following) sim
 from emp
+ 
+SELECT
+    CASE GROUPING(DNAME) WHEN 1 THEN 'All Departments' ELSE DNAME END AS DNAME,
+    CASE GROUPING(JOB) WHEN 1 TEHN 'All Jobs' ELSE JOB END AS JOB,
+    COUNT(*) "Total Empl",
+    SUM(SAL) "Total Sal"
+FROM EMP, DEPT
+WHERE DEPT.DEPTNO = EMP.DEPTNO
+GROUP BY CUBE(DNAME,JOB);
