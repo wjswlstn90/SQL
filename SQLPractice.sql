@@ -92,4 +92,8 @@
                 QTY.ORD_DT, QTY.ITEM_ID, RANK_EA
 ;
 
+UPDATE  []
+	SET     [] = 'N'
+	      , [] = 80000
+        WHERE   [] = #{id,jdbcType=INTEGER}
    
