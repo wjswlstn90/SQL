@@ -119,7 +119,7 @@ SELECT	C.[CFID]
 	  , ''
 	  , C.[HOPTION]
 FROM	[] C
-	  , [CATE_FLAG] CF
+	  , [] CF
 WHERE	1 = 1
 AND		C.[CFID] = CF.[ID]
 AND		C.[HOPTION] NOT IN (80000)
