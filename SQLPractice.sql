@@ -97,3 +97,32 @@ UPDATE  []
 	      , [] = 80000
         WHERE   [] = #{id,jdbcType=INTEGER}
    
+   //두개의 테이블에서 하나의 컬럼으로 합치기
+ SELECT     CF.[ID]
+	  , 0 [CATEID]
+	  , CF.[NAME]		SCR_NM
+	  , CF.[NAME]
+	  , CF.[SEQ]
+	  , 0 [SEQ2]
+	  , CF.[DISP_YN]
+	  , CF.[NOTE]
+	  , CF.[HOPTION]
+FROM	[]	CF
+UNION ALL
+SELECT	C.[CFID]
+	  , C.[CATEID]
+	  , '      ' + C.[NAME]	SCR_NM
+	  , C.[NAME]
+	  , CF.[SEQ]
+	  , C.[SEQ]	SEQ2
+	  , C.[DISP_YN]
+	  , ''
+	  , C.[HOPTION]
+FROM	[] C
+	  , [CATE_FLAG] CF
+WHERE	1 = 1
+AND		C.[CFID] = CF.[ID]
+AND		C.[HOPTION] NOT IN (80000)
+AND		CF.[HOPTION] NOT IN (80000)
+--ORDER BY ID, CATEID
+ORDER BY [SEQ], [SEQ2]
