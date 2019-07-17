@@ -1,5 +1,5 @@
 /**/
-        SELECT 
+        SELECT  
                 QTY.ORD_DT          일자
               , CASE
                     WHEN GROUPING(QTY.ORD_DT) = 0 THEN QTY.ORD_DT
