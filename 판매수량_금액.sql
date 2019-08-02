@@ -1,21 +1,21 @@
-/* «—¥ﬁ∫–∑Æ ∆«∏≈ºˆ∑Æ π◊ ∆«∏≈±›æ◊ ≈Î∞Ë */
+/* ÌïúÎã¨Î∂ÑÎüâ ÌåêÎß§ÏàòÎüâ Î∞è ÌåêÎß§Í∏àÏï° ÌÜµÍ≥Ñ */ 
         SELECT 
-                QTY.ORD_DT          ¿œ¿⁄
+                QTY.ORD_DT          ÏùºÏûê
               , CASE
                     WHEN GROUPING(QTY.ORD_DT) = 0 THEN QTY.ORD_DT
                     WHEN GROUPING(QTY.ORD_DT) = 1 THEN SUBSTR(:st_dt,1,6)
                 END     ORD_DT
-              , QTY.ITEM_ID          ªÛ«∞ID
-              , IT.ITEM_NM          ªÛ«∞∏Ì
+              , QTY.ITEM_ID          ÏÉÅÌíàID
+              , IT.ITEM_NM          ÏÉÅÌíàÎ™Ö
               , CASE
                     WHEN GROUPING(QTY.ORD_DT) = 0 AND GROUPING(IT.ITEM_NM) = 0 THEN IT.ITEM_NM
-                    WHEN GROUPING(QTY.ORD_DT) = 0 AND GROUPING(IT.ITEM_NM) = 1 THEN 'º“∞Ë'
-                    WHEN GROUPING(QTY.ORD_DT) = 1 AND GROUPING(IT.ITEM_NM) = 1 THEN '«’∞Ë'
+                    WHEN GROUPING(QTY.ORD_DT) = 0 AND GROUPING(IT.ITEM_NM) = 1 THEN 'ÏÜåÍ≥Ñ'
+                    WHEN GROUPING(QTY.ORD_DT) = 1 AND GROUPING(IT.ITEM_NM) = 1 THEN 'Ìï©Í≥Ñ'
                 END     ITEM_NM
               , GROUPING(QTY.ORD_DT)    X
               , GROUPING(IT.ITEM_NM)       Y
-              , SUM(QTY.ORD_ITEM_QTY)    ∆«∏≈ºˆ∑Æ
-              , SUM(QTY.ORD_ITEM_QTY * PRICE.SALE_PRICE)     ∆«∏≈±›æ◊   
+              , SUM(QTY.ORD_ITEM_QTY)    ÌåêÎß§ÏàòÎüâ
+              , SUM(QTY.ORD_ITEM_QTY * PRICE.SALE_PRICE)     ÌåêÎß§Í∏àÏï°   
         FROM    ITEM    IT
               , (
                     SELECT  
@@ -27,7 +27,7 @@
                     GROUP BY
                             OI.ORD_DT
                           , OI.ITEM_ID                                        
-                )   QTY -- ∆«∏≈ºˆ∑Æ, ±›æ◊
+                )   QTY -- ÌåêÎß§ÏàòÎüâ, Í∏àÏï°
               , (
                     SELECT 
                             ITEM_ID
@@ -35,7 +35,7 @@
                     FROM    UITEM_PRICE
                     GROUP BY
                             ITEM_ID                            
-                )   PRICE -- ¥‹«∞∞°∞› ≈◊¿Ã∫Ì, ∆«∏≈∞°
+                )   PRICE -- Îã®ÌíàÍ∞ÄÍ≤© ÌÖåÏù¥Î∏î, ÌåêÎß§Í∞Ä
         WHERE   1 = 1
         AND     QTY.ITEM_ID = IT.ITEM_ID   
         AND     PRICE.ITEM_ID = QTY.ITEM_ID
@@ -56,7 +56,7 @@ FROM    (
                     CASE
                         WHEN ITEM_NM IS NOT NULL
                             THEN    CASE
-                                        WHEN ITEM_NM LIKE '%πˆ∞≈%'
+                                        WHEN ITEM_NM LIKE '%Î≤ÑÍ±∞%'
                                             THEN ITEM_NM
                                     END
                     END ITEM_NM
@@ -66,5 +66,5 @@ WHERE   ITEM_NM IS NOT NULL;
 
 
 
-WHERE   ITEM_NM IS NOT NULL AND ITEM_NM LIKE '%πˆ∞≈%'
+WHERE   ITEM_NM IS NOT NULL AND ITEM_NM LIKE '%Î≤ÑÍ±∞%'
 */
