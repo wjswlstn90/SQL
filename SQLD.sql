@@ -29,7 +29,7 @@ AND     T.STADIUM_ID = S.STADIUM_ID
 AND     P.POSITION = 'GK'
 ORDER   BY 선수명
 ;
-
+-- 조인조건과 같음 T.STADIUM_ID = S.STADIUM_ID
 
 -- P15 조인 홈팀이 3점 이상 차이로 승리한 경기의 경기장 이름, 경기 일정, 홈팀 이름과 원정팀 이름 정보를 출력
 SELECT
