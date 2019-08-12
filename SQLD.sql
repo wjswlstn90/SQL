@@ -126,6 +126,7 @@ ORDER BY
    EXISTS    서브쿼리 결과를 만족하는 값이 존재하는지 (있다면 전부 출력)
    선수들 중에서 '정현수'선수가 소속되어 있는 팀 정보를 출력
 */
+--where in( select) 부분 참고
 SELECT
         REGION_NAME
       , TEAM_NAME
