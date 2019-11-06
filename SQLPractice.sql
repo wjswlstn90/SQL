@@ -126,3 +126,27 @@ AND		C.[HOPTION] NOT IN (80000)
 AND		CF.[HOPTION] NOT IN (80000)
 --ORDER BY ID, CATEID
 ORDER BY [SEQ], [SEQ2]
+
+
+/* 계층형 질의 */
+
+/*매니저로부터 자신의 하위 사원을 찾는 순방향 전개*/
+SELECT
+        LEVEL
+      , LPAD(' ', 4*(LEVEL-1)) || EMPNO
+      , MGR
+      , CONNECT_BY_ISLEAF ISLEAF
+FROM    EMP
+START WITH MGR IS NULL
+CONNECT BY PRIOR EMPNO = MGR;
+
+/*사원으로부터 자신의 상위 관리자를 찾는 역방향 전개*/
+SELECT
+        LEVEL
+      , LPAD(' ', 4*(LEVEL-1)) || EMPNO
+      , MGR
+      , CONNECT_BY_ISLEAF ISLEAF
+FROM    EMP
+START WITH EMPNO = '7788'
+CONNECT BY EMPNO = PRIOR MGR ;
+
